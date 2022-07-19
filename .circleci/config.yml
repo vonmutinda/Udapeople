@@ -8,7 +8,7 @@ commands:
         type: string
     steps:
       - run:
-          name: Destroy environments
+          name: Destroy Environments
           when: on_fail
           command: |
             # Your code here
@@ -20,7 +20,7 @@ commands:
     # Add parameter here
     steps:
       - run:
-          name: Revert migrations
+          name: Revert Migrations
           # Add when this will run
           command: |
             # Curl command here to see if there was a successful migration associated with the workflow id, store result in SUCCESS variable
@@ -60,7 +60,7 @@ jobs:
       - restore_cache:
           keys: [backend-build]
       - run:
-          name: Backend build
+          name: Backend Build
           command: |
             # Your code here
             exit 1
@@ -100,9 +100,9 @@ jobs:
       - restore_cache:
           key: frontend-build
       - run:
-        name: Scan Frontend
-        command: |
-          npm run lint
+          name: Scan Frontend
+          command: |
+            npm run lint
 
   scan-backend:
     docker:
@@ -152,7 +152,7 @@ jobs:
 
   configure-infrastructure:
     docker:
-      # Docker image here that supports Ansible
+      - image: python:3.7-alpine3.11 # Docker image here that supports Ansible
     steps:
       # Checkout code from git
       # Add ssh keys with fingerprint
@@ -163,7 +163,7 @@ jobs:
             # Your code here
             exit 1
       - run:
-          name: Configure server
+          name: Configure Server
           command: |
             # Your code here
             exit 1
@@ -171,16 +171,16 @@ jobs:
 
   run-migrations:
     docker:
-      # Docker image here that supports NodeJS
+      - image: circleci/node:13.8.0 # Docker image here that supports NodeJS
     steps:
       # Checkout code from git
       - run:
-          name: Run migrations
+          name: Run Migrations
           command: |
             # Your code here
             exit 1
       - run:
-          name: Send migration results to memstash
+          name: Send Migration Results to Memstash
           command: |
             # Your code here
             exit 1
@@ -188,98 +188,98 @@ jobs:
 
   deploy-frontend:
     docker:
-      # Docker image here that supports AWS CLI
+      - image: amazon/aws-cli # Docker image here that supports AWS CLI
     steps:
       # Checkout code from git
       - run:
-          name: Install dependencies
+          name: Install Dependencies
           command: |
             # your code here
       - run:
-          name: Get backend url
+          name: Get Backend URL
           command: |
             # your code here
             export API_URL="http://${BACKEND_IP}:3030"
             echo "${API_URL}"
       - run:
-          name: Deploy frontend objects
+          name: Deploy Frontend
           command: |
             # your code here
       # Here's where you will add some code to rollback on failure
 
   deploy-backend:
     docker:
-      # Docker image here that supports Ansible
+      - image: python:3.7-alpine3.11 # Docker image here that supports Ansible
     steps:
       # Checkout code from git
       # Add ssh keys with fingerprint
       # attach workspace
       - run:
-          name: Install dependencies
+          name: Install Dependencies
           command: |
             # your code here
       - run:
-          name: Deploy backend
+          name: Deploy Backend
           command: |
             # your code here
       # Here's where you will add some code to rollback on failure
 
   smoke-test:
     docker:
-      # Lightweight Docker image
+      - image: alpine:latest  # Lightweight Docker image
     steps:
       # Checkout code from git
       - run:
-          name: Install dependencies
+          name: Install Dependencies
           command: |
             # your code here
       - run:
-          name: Get backend url
+          name: Get Backend URL
           command: |
             # your code here
       - run:
-          name: Backend smoke test.
+          name: Backend Smoke Test.
           command: |
             # your code here
       - run:
-          name: Frontend smoke test.
+          name: Frontend Smoke Test.
           command: |
             # your code here
       # Here's where you will add some code to rollback on failure
 
   cloudfront-update:
     docker:
-      # Docker image here that supports AWS CLI
+      - image: amazon/aws-cli # Docker image here that supports AWS CLI 
     steps:
       # Checkout code from git
       - run:
-          name: Install dependencies
+          name: Install Dependencies
           command: |
             # your code here
       - run:
-          name: Update cloudfront distribution
+          name: Update Cloudfront Distribution
           command: |
             # your code here
       # Here's where you will add some code to rollback on failure
 
-cleanup:
-  docker:
-    # Docker image here
-  steps:
-    # Checkout code from git
-    - run:
-        name: Get old stack workflow id
-        command: |
-          # your code here
-          export OldWorkflowID="the id here"
-          export STACKS=[] #put the list of stacks here
-    - run:
-        name: Remove old stacks and files
-        command: |
-          if [[ "${STACKS[@]}" =~ "${OldWorkflowID}" ]]
-          then
-            # your code here
-          fi
+  cleanup:
+      docker:
+        - image: alpine:latest # Docker image here
+      steps:
+        # Checkout code from git
+        - run:
+            name: Get Old Stack Workflow-ID
+            command: |
+              # your code here
+              export OldWorkflowID="the id here"
+              export STACKS=[] #put the list of stacks here
+        - run:
+            name: Remove Old Stacks and Files
+            command: |
+              if [[ "${STACKS[@]}" =~ "${OldWorkflowID}" ]]
+              then
+                # your code here
+              fi
 
 workflows:
   default:
