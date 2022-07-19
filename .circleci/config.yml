@@ -76,9 +76,9 @@ jobs:
       - restore_cache:
           key: frontend-build
       - run:
-        name: Test Frontend
-        command: |
-          npm run test
+          name: Test Frontend
+          command: |
+            npm run test
 
   test-backend:
     docker:
@@ -112,9 +112,9 @@ jobs:
       - restore_cache:
           key: backend-build
       - run:
-        name: Scan Backend
-        command: |
-          npm run lint
+          name: Scan Backend
+          command: |
+            npm run lint
 
   deploy-infrastructure:
     docker:
