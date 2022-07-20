@@ -1,6 +1,6 @@
 version: 2.1
 
-orbs: 
+orbs:
   slack: circleci/slack@4.10.1
 
 commands:
@@ -128,8 +128,8 @@ jobs:
           name: Scan Backend
           command: |
             cd backend
-            npm install
-            npm audit fix
+            npm install 
+            npm audit fix --audit-level=critical --force
             npm audit --audit-level=critical
 
   deploy-infrastructure:
@@ -171,7 +171,7 @@ jobs:
       - image: python:3.7-alpine3.11 # Docker image here that supports Ansible
     steps:
       - checkout
-      
+
       # Checkout code from git
       # Add ssh keys with fingerprint
       # attach workspace
@@ -244,7 +244,7 @@ jobs:
 
   smoke-test:
     docker:
-      - image: alpine:latest  # Lightweight Docker image
+      - image: alpine:latest # Lightweight Docker image
     steps:
       # Checkout code from git
       - run:
@@ -267,7 +267,7 @@ jobs:
 
   cloudfront-update:
     docker:
-      - image: amazon/aws-cli # Docker image here that supports AWS CLI 
+      - image: amazon/aws-cli # Docker image here that supports AWS CLI
     steps:
       # Checkout code from git
       - run:
@@ -281,23 +281,23 @@ jobs:
       # Here's where you will add some code to rollback on failure
 
   cleanup:
-      docker:
-        - image: alpine:latest # Docker image here
-      steps:
-        # Checkout code from git
-        - run:
-            name: Get Old Stack Workflow-ID
-            command: |
+    docker:
+      - image: alpine:latest # Docker image here
+    steps:
+      # Checkout code from git
+      - run:
+          name: Get Old Stack Workflow-ID
+          command: |
+            # your code here
+            export OldWorkflowID="the id here"
+            export STACKS=[] #put the list of stacks here
+      - run:
+          name: Remove Old Stacks and Files
+          command: |
+            if [[ "${STACKS[@]}" =~ "${OldWorkflowID}" ]]
+            then
               # your code here
-              export OldWorkflowID="the id here"
-              export STACKS=[] #put the list of stacks here
-        - run:
-            name: Remove Old Stacks and Files
-            command: |
-              if [[ "${STACKS[@]}" =~ "${OldWorkflowID}" ]]
-              then
-                # your code here
-              fi
+            fi
 
 workflows:
   default:
