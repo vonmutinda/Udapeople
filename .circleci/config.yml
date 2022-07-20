@@ -46,6 +46,7 @@ jobs:
           command: |
             cd frontend
             npm install
+            npm run format
             npm run build
       - save_cache:
           key: frontend-build
@@ -62,8 +63,10 @@ jobs:
       - run:
           name: Backend Build
           command: |
-            # Your code here
-            exit 1
+            cd backend
+            npm install
+            npm run format
+            npm run build
       - save_cache:
           paths: [backend/node_modules]
           key: backend-build
@@ -78,6 +81,7 @@ jobs:
       - run:
           name: Test Frontend
           command: |
+            cd frontend  
             npm run test
 
   test-backend:
@@ -102,6 +106,7 @@ jobs:
       - run:
           name: Scan Frontend
           command: |
+            cd frontend 
             npm run lint
 
   scan-backend:
@@ -114,6 +119,7 @@ jobs:
       - run:
           name: Scan Backend
           command: |
+            cd backend
             npm run lint
 
   deploy-infrastructure:
@@ -154,6 +160,8 @@ jobs:
     docker:
       - image: python:3.7-alpine3.11 # Docker image here that supports Ansible
     steps:
+      - checkout
+      
       # Checkout code from git
       # Add ssh keys with fingerprint
       # attach workspace
