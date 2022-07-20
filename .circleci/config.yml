@@ -81,7 +81,8 @@ jobs:
       - run:
           name: Test Frontend
           command: |
-            cd frontend  
+            cd frontend 
+            npm install 
             npm run test
 
   test-backend:
@@ -94,6 +95,8 @@ jobs:
       - run:
           name: Test Backend
           command: |
+            cd backend
+            npm install
             npm run test
 
   scan-frontend:
@@ -107,6 +110,7 @@ jobs:
           name: Scan Frontend
           command: |
             cd frontend 
+            npm install
             npm run lint
 
   scan-backend:
@@ -120,6 +124,7 @@ jobs:
           name: Scan Backend
           command: |
             cd backend
+            npm install
             npm run lint
 
   deploy-infrastructure:
