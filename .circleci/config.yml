@@ -7,7 +7,7 @@ commands:
   destroy-environment:
     description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
     parameters:
-      workflow-id:
+      Workflow_ID:
         type: string
         default: ${CIRCLE_WORKFLOW_ID:0:7}
     steps:
@@ -20,8 +20,8 @@ commands:
               aws cloudformation delete-stack --stack-name udapeople-cloudfront-maxwell-mutinda
             fi 
             aws s3 rm s3://udapeople-cloudfront-maxwell-mutinda --recursive
-            aws cloudformation delete-stack --stack-name udapeople-frontend-<< parameters.workflow-id >>
-            aws cloudformation delete-stack --stack-name udapeople-backend-<< parameters.workflow-id >>
+            aws cloudformation delete-stack --stack-name udapeople-frontend-<< parameters.Workflow_ID >>
+            aws cloudformation delete-stack --stack-name udapeople-backend-<< parameters.Workflow_ID >>
 
   revert-migrations:
     description: Revert the last migration if successfully run in the current workflow.
@@ -191,7 +191,7 @@ jobs:
 
   configure-infrastructure:
     docker:
-      - image: python:3.7-alpine3.11 # Docker image here that supports Ansible
+      - image: amazon/aws-cli # Docker image here that supports Ansible
     steps:
       - checkout
       - add_ssh_keys:
@@ -308,7 +308,7 @@ jobs:
     steps:
       # Checkout code from git
       - run:
-          name: Get Old Stack Workflow-ID
+          name: Get Old Stack Workflow_ID
           command: |
             # your code here
             export OldWorkflowID="the id here"

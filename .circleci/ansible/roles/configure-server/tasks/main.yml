@@ -14,12 +14,12 @@
   apt:
     autoremove: yes
 
-- name: "Install node and npm"
-  apt:
-    name: ["nodejs", "npm"]
-    state: latest
-    update_cache: yes
-
+- name: "Install NodeJs v12.x"
+  shell: |
+    curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
+    sudo apt -y upgrade
+    sudo apt install -y nodejs
+  
 - name: "Install pm2 by npm"
   become: true
   npm:
