@@ -9,13 +9,26 @@ commands:
     parameters:
       workflow-id:
         type: string
+        default: ${CIRCLE_WORKFLOW_ID:0:7}
     steps:
       - run:
           name: Destroy Environments
           when: on_fail
           command: |
-            # Your code here
-            exit 1
+            if aws cloudformation wait stack-exists --stack-name udapeople-cloudfront-<< parameters.workflow-id >>
+            then 
+              aws cloudformation delete-stack --stack-name udapeople-cloudfront-<< parameters.workflow-id >>
+            fi
+            
+            if aws cloudformation wait stack-exists --stack-name udapeople-frontend-<< parameters.workflow-id >>
+            then 
+              aws cloudformation delete-stack --stack-name udapeople-frontend-<< parameters.workflow-id >>
+            fi
+
+            if aws cloudformation wait stack-exists --stack-name udapeople-backend-<< parameters.workflow-id >>
+            then
+              aws cloudformation delete-stack --stack-name udapeople-backend-<< parameters.workflow-id >>
+            fi
 
   revert-migrations:
     description: Revert the last migration if successfully run in the current workflow.
@@ -143,6 +156,13 @@ jobs:
             sudo apt-get install tar 
             sudo apt-get install gzip
       - run:
+          name: Ensure cloudfront exists
+          command: |
+            aws cloudformation deploy \
+              --template-file .circleci/files/cloudfront.yml \
+              --stack-name "udapeople-cloudfront-${CIRCLE_WORKFLOW_ID:0:7}"\
+              --parameter-overrides WorkflowID=udapeople-maxwell-mutinda
+      - run:
           name: Ensure back-end infrastructure exists
           command: |
             aws cloudformation deploy \
@@ -157,7 +177,7 @@ jobs:
               --template-file .circleci/files/frontend.yml \
               --tags project=your-tag \
               --stack-name udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7} \
-              --parameter-overrides ID=udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}   
+              --parameter-overrides ID=udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}
       - run:
           name: Add Backend IP To Ansible Inventory
           command: |
@@ -177,13 +197,13 @@ jobs:
     steps:
       - checkout
       - add_ssh_keys:
-          fingerprints: ['b2:c6:60:5e:5c:43:64:16:7e:3e:89:62:d6:f1:f4:59'] 
+          fingerprints: ["b2:c6:60:5e:5c:43:64:16:7e:3e:89:62:d6:f1:f4:59"]
       - attach_workspace:
           at: ~/
       - run:
           name: Install Dependencies
           command: |
-            apk add --update ansible 
+            apk add --update ansible
       - run:
           name: Configure Server
           command: |
