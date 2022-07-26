@@ -28,7 +28,7 @@ Resources:
       InstanceType: t2.micro
       SecurityGroups:
         - Ref: InstanceSecurityGroup
-      KeyName: vockey # security group
+      KeyName: udacity # security group
       ImageId: ami-0729e439b6769d6ab # ubuntu 20.04 lts
       Tags:
         - Key: Name
