@@ -14,7 +14,7 @@
   apt:
     autoremove: yes
 
-- name: "Install node and npm" 
+- name: "Install node and npm"
   apt:
     name: ["nodejs", "npm"]
     state: latest
@@ -36,4 +36,4 @@
 - name: "Install package dependencies"
   shell: |
     cd /home/ubuntu/backend    
-    npm install 
+    npm install

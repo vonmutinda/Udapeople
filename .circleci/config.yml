@@ -18,17 +18,10 @@ commands:
             if aws cloudformation wait stack-exists --stack-name udapeople-cloudfront-maxwell-mutinda
             then 
               aws cloudformation delete-stack --stack-name udapeople-cloudfront-maxwell-mutinda
-            fi
-            
-            if aws cloudformation wait stack-exists --stack-name udapeople-frontend-<< parameters.workflow-id >>
-            then 
-              aws cloudformation delete-stack --stack-name udapeople-frontend-<< parameters.workflow-id >>
-            fi
-
-            if aws cloudformation wait stack-exists --stack-name udapeople-backend-<< parameters.workflow-id >>
-            then
-              aws cloudformation delete-stack --stack-name udapeople-backend-<< parameters.workflow-id >>
-            fi
+            fi 
+            aws s3 rm s3://udapeople-cloudfront-maxwell-mutinda --recursive
+            aws cloudformation delete-stack --stack-name udapeople-frontend-<< parameters.workflow-id >>
+            aws cloudformation delete-stack --stack-name udapeople-backend-<< parameters.workflow-id >>
 
   revert-migrations:
     description: Revert the last migration if successfully run in the current workflow.
@@ -193,7 +186,7 @@ jobs:
           root: ~/
           paths:
             - project/.circleci/ansible/inventory.txt
-      - destroy-environment # rollback on failure
+      - destroy-environment
 
   configure-infrastructure:
     docker:
@@ -213,7 +206,7 @@ jobs:
           command: |
             cd .circleci/ansible
             ansible-playbook -i inventory.txt configure-server.yml
-      - destroy-environment # rollback on failure
+      - destroy-environment
 
   run-migrations:
     docker:
