@@ -152,9 +152,9 @@ jobs:
       - run:
           name: Install tar and gzip
           command: |
-            sudo apt-get update 
-            sudo apt-get install tar 
-            sudo apt-get install gzip
+            apt-get update 
+            apt-get install tar 
+            apt-get install gzip
       - run:
           name: Ensure cloudfront exists
           command: |
