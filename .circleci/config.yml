@@ -19,7 +19,10 @@ commands:
             then 
               aws cloudformation delete-stack --stack-name udapeople-cloudfront-maxwell-mutinda
             fi 
-            aws s3 rm s3://udapeople-cloudfront-maxwell-mutinda --recursive
+            if aws s3api head-bucket --bucket udapeople-maxwell-mutinda-<< parameters.Workflow_ID >>
+            then
+              aws s3 rm s3://udapeople-maxwell-mutinda-<< parameters.Workflow_ID >>/ --recursive
+            fi
             aws cloudformation delete-stack --stack-name udapeople-frontend-<< parameters.Workflow_ID >>
             aws cloudformation delete-stack --stack-name udapeople-backend-<< parameters.Workflow_ID >>
 
@@ -172,7 +175,7 @@ jobs:
           command: |
             aws cloudformation deploy \
               --template-file .circleci/files/frontend.yml \
-              --tags project=your-tag \
+              --tags project=udapeople-frontend \
               --stack-name udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7} \
               --parameter-overrides ID=udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}
       - run:
