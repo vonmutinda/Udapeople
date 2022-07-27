@@ -30,7 +30,7 @@
 
 - name: "Copy files from CircleCI to server"
   copy:
-    src: /root/cdond-c3-projectstarter/backend
+    src: /root/Udapeople/backend
     dest: /home/ubuntu
 
 - name: "Install package dependencies"

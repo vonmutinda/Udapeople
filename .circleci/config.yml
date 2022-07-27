@@ -203,6 +203,7 @@ jobs:
           at: ~/
       - run:
           name: Install Dependencies
+          working_directory: ./.circleci/ansible
           command: |
             apk add --update ansible
       - run:
