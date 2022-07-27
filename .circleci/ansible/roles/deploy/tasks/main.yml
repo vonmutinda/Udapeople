@@ -1,0 +1,21 @@
+---
+- name: "Create Backend App Directory"
+  file:
+    path: ~/udapeople-backend-app
+    state: directory
+
+- name: "Extract Backend Artifact"
+  unarchive:
+    src: artifact.tar.gz
+    dest: ~/udapeople-backend-app
+
+- name: "Install Dependencies"
+  shell: |
+    cd ~/udapeople-backend-app
+    npm install
+
+- name: "Start Backend Service"
+  shell: |
+    cd ~/udapeople-backend-app/dist
+    pm2 stop default
+    pm2 start main.js
