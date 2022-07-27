@@ -215,17 +215,15 @@ jobs:
 
   configure-infrastructure:
     docker:
-      - image: python:3.7-alpine3.11
+      - image: cimg/base:stable
     steps:
       - checkout
+      - install-aws-cli
+      - install-ansible
       - add_ssh_keys:
           fingerprints: ["b2:c6:60:5e:5c:43:64:16:7e:3e:89:62:d6:f1:f4:59"]
       - attach_workspace:
           at: ~/
-      - run:
-          name: Installed required deps
-          command: |
-            apk add --update ansible curl aws-cli
       - run:
           name: Configure Server
           command: |
