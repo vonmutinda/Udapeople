@@ -18,6 +18,8 @@ commands:
             if aws s3api head-bucket --bucket udapeople-maxwell-mutinda-<< parameters.Workflow_ID >>
               then
                 aws s3 rm s3://udapeople-maxwell-mutinda-<< parameters.Workflow_ID >>/ --recursive
+              else
+                echo "Bucket empty or doesn't exist"
             fi
       - run:
           name: Destroy Environments
@@ -213,15 +215,19 @@ jobs:
 
   configure-infrastructure:
     docker:
-      - image: cimg/base:stable
+      - image: python:3.10.5-alpine3.11
     steps:
       - checkout
-      - install-ansible
-      - install-aws-cli
+      # - install-ansible
+      # - install-aws-cli
       - add_ssh_keys:
           fingerprints: ["b2:c6:60:5e:5c:43:64:16:7e:3e:89:62:d6:f1:f4:59"]
       - attach_workspace:
           at: ~/
+      - run:
+          name: Installed required packages
+          command: | 
+            apk add --update ansible curl aws-cli
       - run:
           name: Configure Server
           command: |
