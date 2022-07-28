@@ -229,7 +229,7 @@ jobs:
           root: ~/
           paths:
             - project/.circleci/ansible/inventory.txt
-      - destroy-environment
+      # - destroy-environment
 
   configure-infrastructure:
     docker:
@@ -248,7 +248,7 @@ jobs:
             cd .circleci/ansible
             cat inventory.txt
             ansible-playbook -i inventory.txt configure-server.yml
-      - destroy-environment
+      # - destroy-environment
 
   run-migrations:
     docker:
@@ -272,8 +272,8 @@ jobs:
             then
               curl --insecure https://kvdb.io/SxXy3EGmZ1JErv5jhxou7h/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d '1'
             fi
-      - destroy-environment
-      - revert-migrations
+      # - destroy-environment
+      # # - revert-migrations
 
   deploy-frontend:
     docker:
@@ -306,8 +306,8 @@ jobs:
             npm run build
             tar -czvf artifact-"${CIRCLE_WORKFLOW_ID:0:7}".tar.gz dist
             aws s3 cp dist s3://udapeople-maxwell-mutinda-${CIRCLE_WORKFLOW_ID:0:7} --recursive
-      - destroy-environment
-      - revert-migrations
+      # - destroy-environment
+      # - revert-migrations
 
   deploy-backend:
     docker:
@@ -343,8 +343,8 @@ jobs:
             echo "Contents  of inventory.txt file:"
             cat inventory.txt
             ansible-playbook -i inventory.txt deploy-backend.yml
-      - destroy-environment
-      - revert-migrations
+      # - destroy-environment
+      # - revert-migrations
 
   smoke-test:
     docker:
@@ -379,8 +379,8 @@ jobs:
             else
               exit 1
             fi
-      - destroy-environment
-      - revert-migrations
+      # - destroy-environment
+      # - revert-migrations
 
   cloudfront-update:
     docker:
@@ -396,8 +396,8 @@ jobs:
           name: Update Cloudfront Distribution
           command: |
             # your code here
-      - destroy-environment
-      - revert-migrations
+      # - destroy-environment
+      # - revert-migrations
 
   cleanup:
     docker:
