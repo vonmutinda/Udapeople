@@ -47,6 +47,15 @@ commands:
             unzip awscliv2.zip
             sudo ./aws/install
 
+  install-nodejs:
+    description: Install Nodejs v13.x
+    steps:
+      - run:
+          name: Install Nodejs v13.x
+          command: |
+            curl -fsSL https://deb.nodesource.com/setup_13.x | sudo -E bash -
+            sudo apt install -y nodejs
+
   revert-migrations:
     description: Revert the last migration if successfully run in the current workflow.
     parameters:
@@ -64,7 +73,7 @@ commands:
               cd ~/project/backend
               npm install
               npm run migration:revert
-            fi 
+            fi
 
 jobs:
   build-frontend:
@@ -284,6 +293,8 @@ jobs:
       - run:
           name: Deploy Frontend Objects
           command: |
+            cd frontend
+            npm run build
             tar -czvf artifact-"${CIRCLE_WORKFLOW_ID:0:7}".tar.gz dist
             aws s3 cp dist s3://udapeople-maxwell-mutinda-${CIRCLE_WORKFLOW_ID:0:7} --recursive
       - destroy-environment
@@ -291,7 +302,7 @@ jobs:
 
   deploy-backend:
     docker:
-      - image: cimg/base:stable
+      - image: circleci/node:13.8.0
     steps:
       - checkout
       - install-ansible
@@ -303,15 +314,18 @@ jobs:
       - add_ssh_keys:
           fingerprints: ["b2:c6:60:5e:5c:43:64:16:7e:3e:89:62:d6:f1:f4:59"]
       - run:
+          name: Install SSH
+          command: |
+            apk add --update openssh
+      - run:
           name: Install Dependencies
           command: |
             cd backend
-            npm install 
+            npm install
       - run:
           name: Bundle Artifact
           command: |
             tar -C backend -czvf artifact.tar.gz .
-            npm install 
       - run:
           name: Deploy Backend
           command: |
@@ -327,7 +341,7 @@ jobs:
       - image: alpine:latest # Lightweight Docker image
     steps:
       - checkout
-      - install-aws-cli 
+      - install-aws-cli
       - run:
           name: Get Backend URL
           command: |
