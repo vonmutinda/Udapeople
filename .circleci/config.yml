@@ -359,11 +359,11 @@ jobs:
               --filters "Name=tag:project,Values=udapeople-backend" \
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
               --output text)
-            export UDAPEOPLE_BACKEND_API_URL="http://${UDAPEOPLE_BACKEND_IP}:3030"
+            export UDAPEOPLE_BACKEND_API_URL=http://${UDAPEOPLE_BACKEND_IP}:3030 
       - run:
           name: Backend Smoke Test.
           command: |
-            echo "${UDAPEOPLE_BACKEND_API_URL}"
+            echo "Backend API URL: ${UDAPEOPLE_BACKEND_API_URL}"
             if curl "${UDAPEOPLE_BACKEND_API_URL}/api/status" | grep "ok"
             then
               return 0
@@ -373,13 +373,14 @@ jobs:
       - run:
           name: Frontend Smoke Test.
           command: |
-            UDAPEOPLE_FRONTEND_URL=http://udapeople-${CIRCLE_WORKFLOW_ID:0:7}.s3-website.${AWS_DEFAULT_REGION}.amazonaws.com
-            echo "${UDAPEOPLE_FRONTEND_URL}"
-            if curl -s $UDAPEOPLE_FRONTEND_URL | grep "Welcome"
+            UDAPEOPLE_FRONTEND_URL="http://udapeople-maxwell-mutinda-${CIRCLE_WORKFLOW_ID:0:7}.s3-website-us-east-1.amazonaws.com/#/employees"            
+            echo "Frontend URL: ${UDAPEOPLE_FRONTEND_URL}"
+            if curl -s ${UDAPEOPLE_FRONTEND_URL} | grep "Welcome"
             then
-              exit 0
+                # Change this to 0 after the job fails
+              return 1
             else
-              exit 1
+              return 1
             fi
       - destroy-environment
       - revert-migrations
