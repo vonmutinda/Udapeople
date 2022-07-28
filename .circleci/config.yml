@@ -311,12 +311,12 @@ jobs:
 
   deploy-backend:
     docker:
-      - image: circleci/node:13.8.0
+      - image: cimg/base:stable
     steps:
       - checkout
       - install-ansible
       - install-aws-cli
-      - install-ssh
+      - install-nodejs
       - attach_workspace:
           at: ~/
       - restore_cache:
