@@ -55,7 +55,7 @@ commands:
           command: |
             curl -fsSL https://deb.nodesource.com/setup_13.x | sudo -E bash -
             sudo apt install -y nodejs
-  
+
   install-ssh:
     description: Install OpenSSH Server
     steps:
@@ -293,11 +293,11 @@ jobs:
       - run:
           name: Get Backend URL
           command: |
-            BACKEND_PUBLIC_IP=$(aws ec2 describe-instances \
+            UDAPEOPLE_BACKEND_IP=$(aws ec2 describe-instances \
               --filters "Name=tag:project,Values=udapeople-backend" \
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
               --output text)
-            echo "API_URL=http://${BACKEND_PUBLIC_IP}:3030" >> frontend/.env
+            echo "API_URL=http://${UDAPEOPLE_BACKEND_IP}:3030" >> frontend/.env
             cat frontend/.env
       - run:
           name: Deploy Frontend Objects
@@ -348,33 +348,39 @@ jobs:
 
   smoke-test:
     docker:
-      - image: alpine:latest # Lightweight Docker image
+      - image: cimg/base:stable
     steps:
       - checkout
       - install-aws-cli
       - run:
           name: Get Backend URL
           command: |
-            BACKEND_PUBLIC_IP=$(aws ec2 describe-instances \
-              --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
+            UDAPEOPLE_BACKEND_IP=$(aws ec2 describe-instances \
+              --filters "Name=tag:project,Values=udapeople-backend" \
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
               --output text)
-            export API_URL="http://${BACKEND_IP}:3030"
-            echo "${API_URL}"
-            if curl "${API_URL}/api/status" | grep "ok"
-            then
-                return 0
-            else
-                return 1
-            fi
+            export UDAPEOPLE_BACKEND_API_URL="http://${UDAPEOPLE_BACKEND_IP}:3030"
       - run:
           name: Backend Smoke Test.
           command: |
-            # your code here
+            echo "${UDAPEOPLE_BACKEND_API_URL}"
+            if curl "${UDAPEOPLE_BACKEND_API_URL}/api/status" | grep "ok"
+            then
+              return 0
+            else
+              return 1
+            fi
       - run:
           name: Frontend Smoke Test.
           command: |
-            # your code here
+            UDAPEOPLE_FRONTEND_URL=http://udapeople-${CIRCLE_WORKFLOW_ID:0:7}.s3-website.${AWS_DEFAULT_REGION}.amazonaws.com
+            echo "${UDAPEOPLE_FRONTEND_URL}"
+            if curl -s $UDAPEOPLE_FRONTEND_URL | grep "Welcome"
+            then
+              exit 0
+            else
+              exit 1
+            fi
       - destroy-environment
       - revert-migrations
 
