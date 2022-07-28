@@ -55,6 +55,15 @@ commands:
           command: |
             curl -fsSL https://deb.nodesource.com/setup_13.x | sudo -E bash -
             sudo apt install -y nodejs
+  
+  install-ssh:
+    description: Install OpenSSH Server
+    steps:
+      - run:
+          name: Install OpenSSH
+          command: |
+            sudo apt update
+            sudo apt install openssh-server
 
   revert-migrations:
     description: Revert the last migration if successfully run in the current workflow.
@@ -307,16 +316,13 @@ jobs:
       - checkout
       - install-ansible
       - install-aws-cli
+      - install-ssh
       - attach_workspace:
           at: ~/
       - restore_cache:
           keys: [backend-build]
       - add_ssh_keys:
           fingerprints: ["b2:c6:60:5e:5c:43:64:16:7e:3e:89:62:d6:f1:f4:59"]
-      - run:
-          name: Install SSH
-          command: |
-            apk add --update openssh
       - run:
           name: Install Dependencies
           command: |
@@ -345,7 +351,6 @@ jobs:
       - run:
           name: Get Backend URL
           command: |
-            # your code here
             BACKEND_PUBLIC_IP=$(aws ec2 describe-instances \
               --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
@@ -366,12 +371,14 @@ jobs:
           name: Frontend Smoke Test.
           command: |
             # your code here
-      # Here's where you will add some code to rollback on failure
+      - destroy-environment
+      - revert-migrations
 
   cloudfront-update:
     docker:
       - image: amazon/aws-cli # Docker image here that supports AWS CLI
     steps:
+      - checkout
       # Checkout code from git
       - run:
           name: Install Dependencies
@@ -381,12 +388,14 @@ jobs:
           name: Update Cloudfront Distribution
           command: |
             # your code here
-      # Here's where you will add some code to rollback on failure
+      - destroy-environment
+      - revert-migrations
 
   cleanup:
     docker:
       - image: alpine:latest # Docker image here
     steps:
+      - checkout
       # Checkout code from git
       - run:
           name: Get Old Stack Workflow_ID
