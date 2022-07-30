@@ -16,10 +16,9 @@
 - name: "Start Backend Service"
   become: true
   shell: |
-    cd /home/ubuntu/udapeople-backend-app 
-    npm install
+    cd /home/ubuntu/udapeople-backend-app/dist
     pm2 stop default
-    pm2 start npm -- start
+    pm2 start main.js
   register: udapeople_backend_server
 
 - name: "Log Server Messages"
