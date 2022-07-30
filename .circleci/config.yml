@@ -198,8 +198,8 @@ jobs:
             else
               aws cloudformation deploy \
                 --template-file .circleci/files/cloudfront.yml \
-                --stack-name "udapeople-cloudfront-maxwell-mutinda"\
-                --parameter-overrides WorkflowID=udapeople-cloudfront-maxwell-mutinda
+                --stack-name InitialStack\
+                --parameter-overrides WorkflowID=udapeople-cloudfront-mxwll-mtnd
             fi
       - run:
           name: Ensure back-end infrastructure exists
@@ -384,18 +384,29 @@ jobs:
 
   cloudfront-update:
     docker:
-      - image: amazon/aws-cli # Docker image here that supports AWS CLI
+      - image: cimg/base:stable
     steps:
       - checkout
-      # Checkout code from git
+      - install-aws-cli
       - run:
-          name: Install Dependencies
+          name: Cache Previous WorkflowID in kvdb.io
           command: |
-            # your code here
+            export PREVIOUS_WORKFLOW_ID=$(aws cloudformation list-exports \
+              --query "Exports[?Name==\`WorkflowID\`].Value" \
+              --no-paginate \
+              --output text)
+            echo "Previous WokflowID: $PREVIOUS_WORKFLOW_ID"
+            curl --insecure https://kvdb.io/SxXy3EGmZ1JErv5jhxou7h/old_workflow_id -d "${PREVIOUS_WORKFLOW_ID}"
       - run:
           name: Update Cloudfront Distribution
           command: |
-            # your code here
+            aws cloudformation deploy \
+            --template-file .circleci/files/cloudfront.yml \
+            --stack-name InitialStack \
+            --parameter-overrides WorkflowID="udapeople-cloudfront-${CIRCLE_WORKFLOW_ID:0:7}" \
+            --tags project=udapeople
+            echo "Previous WorkflowID: ${PREVIOUS_WORKFLOW_ID}"
+            echo "Current WorkflowID: ${CIRCLE_WORKFLOW_ID:0:7}"
       # - destroy-environment
       # - revert-migrations
 

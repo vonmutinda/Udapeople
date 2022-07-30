@@ -18,3 +18,8 @@
     cd ~/udapeople-backend-app/dist
     pm2 stop default
     pm2 start main.js
+  register: udapeople_backend_server
+
+- name: "Log Server Messages"
+  debug:
+    msg: "{{ udapeople_backend_server.stdout_lines }}"

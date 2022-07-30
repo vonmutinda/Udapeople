@@ -22,18 +22,6 @@
       raw: test -e /usr/bin/python3 || (apt -y update && apt install -y python3)
       changed_when: false
 
-  environment:
-    - CIRCLE_WORKFLOW_ID: "{{ lookup('env','CIRCLE_WORKFLOW_ID') }}"
-    - ENVIRONMENT: "{{ lookup('env','ENVIRONMENT') }}"
-    - TYPEORM_CONNECTION: "{{ lookup('env', 'TYPEORM_CONNECTION')}}"
-    - TYPEORM_DATABASE: "{{ lookup('env','TYPEORM_DATABASE') }}"
-    - TYPEORM_ENTITIES: "{{ lookup('env','TYPEORM_ENTITIES') }}"
-    - TYPEORM_HOST: "{{ lookup('env','TYPEORM_HOST') }}"
-    - TYPEORM_MIGRATIONS: "{{ lookup('env','TYPEORM_MIGRATIONS') }}"
-    - TYPEORM_PASSWORD: "{{ lookup('env','TYPEORM_PASSWORD') }}"
-    - TYPEORM_PORT: "{{ lookup('env','TYPEORM_PORT') }}"
-    - TYPEORM_USERNAME: "{{ lookup('env','TYPEORM_USERNAME') }}"
-
   roles:
     - configure-server
     - configure-prometheus-node-exporter
