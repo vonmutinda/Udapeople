@@ -14,11 +14,9 @@
     npm install
 
 - name: "Start Backend Service"
+  become: true
   shell: |
-    cd /home/ubuntu/udapeople-backend-app/dist
-    pm2 stop default
-    pm2 start main.js
-
+    cd /home/ubuntu/udapeople-backend-app 
     npm install
     pm2 stop default
     pm2 start npm -- start
@@ -27,3 +25,8 @@
 - name: "Log Server Messages"
   debug:
     msg: "{{ udapeople_backend_server.stdout_lines }}"
+
+- name: "Configure PM2 As A systemd Service"
+  become: true
+  shell: |
+    env PATH=$PATH:/usr/local/bin pm2 startup systemd -u ubuntu --hp /home/ubuntu
