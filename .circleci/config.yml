@@ -452,7 +452,14 @@ jobs:
 
             if [[ "${CIRCLE_WORKFLOW_ID:0:7}" != "${OldWorkflowID}" ]]
             then
-              aws s3 rm "s3://udapeople-maxwell-mutinda-${OLD_WORKFLOW_ID}" --recursive
+
+              if aws s3api head-bucket --bucket udapeople-maxwell-mutinda-${OLD_WORKFLOW_ID}
+              then
+                aws s3 rm s3://udapeople-maxwell-mutinda-${OLD_WORKFLOW_ID} --recursive
+              else
+                echo "Bucket empty or doesn't exist"
+              fi
+
               aws cloudformation delete-stack --stack-name "udapeople-backend-${OLD_WORKFLOW_ID}"
               aws cloudformation delete-stack --stack-name "udapeople-frontend-${OLD_WORKFLOW_ID}"
 
