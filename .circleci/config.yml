@@ -341,7 +341,7 @@ jobs:
             cp backend/artifact.tar.gz .circleci/ansible/roles/deploy/files
       - run:
           name: Deploy Backend
-          command: | 
+          command: |
             export TYPEORM_MIGRATIONS_DIR=./migrations
             export TYPEORM_ENTITIES=./modules/domain/**/*.entity{.ts,.js}
             export TYPEORM_MIGRATIONS=./migrations/*.ts
@@ -380,7 +380,7 @@ jobs:
       - run:
           name: Frontend Smoke Test.
           command: |
-            UDAPEOPLE_FRONTEND_URL="http://udapeople-maxwell-mutinda-${CIRCLE_WORKFLOW_ID:0:7}.s3-website-us-east-1.amazonaws.com/#/employees"            
+            UDAPEOPLE_FRONTEND_URL="http://udapeople-maxwell-mutinda-${CIRCLE_WORKFLOW_ID:0:7}.s3-website-us-east-1.amazonaws.com"            
             echo "Frontend URL: ${UDAPEOPLE_FRONTEND_URL}"
 
             if curl -s ${UDAPEOPLE_FRONTEND_URL} | grep "Welcome"
@@ -399,6 +399,7 @@ jobs:
     steps:
       - checkout
       - install-aws-cli
+      - install-nodejs
       - run:
           name: Cache Old WorkflowID Using kvdb.io
           command: |
@@ -429,6 +430,7 @@ jobs:
     steps:
       - checkout
       - install-aws-cli
+      - install-nodejs
       - run:
           name: Get Old Stack WorkflowID
           command: |

@@ -24,8 +24,3 @@
 - name: "Log Server Messages"
   debug:
     msg: "{{ udapeople_backend_server.stdout_lines }}"
-
-# - name: "Configure PM2 As A systemd Service"
-#   become: true
-#   shell: |
-#     env PATH=$PATH:/usr/local/bin pm2 startup systemd -u ubuntu --hp /home/ubuntu
