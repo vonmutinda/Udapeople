@@ -442,11 +442,14 @@ jobs:
             export OLD_WORKFLOW_ID=$(curl --insecure https://kvdb.io/SxXy3EGmZ1JErv5jhxou7h/old_workflow_id)
             echo "Old WorkflowID: ${OLD_WORKFLOW_ID}" 
 
-            if [[ "${STACKS[@]}" =~ "${OLD_WORKFLOW_ID}" ]]
+            # if [[ "${STACKS[@]}" =~ "${OLD_WORKFLOW_ID}" ]]  
+            if [[ "${CIRCLE_WORKFLOW_ID:0:7}" != "${OldWorkflowID}" ]]
             then
               aws s3 rm "s3://udapeople-maxwell-mutinda-${OLD_WORKFLOW_ID}" --recursive
               aws cloudformation delete-stack --stack-name "udapeople-backend-${OLD_WORKFLOW_ID}"
               aws cloudformation delete-stack --stack-name "udapeople-frontend-${OLD_WORKFLOW_ID}"
+
+              echo "Successfully cleaned up old infra"
             fi
 
       - destroy-environment
