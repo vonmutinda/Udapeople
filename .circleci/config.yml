@@ -361,6 +361,8 @@ jobs:
     steps:
       - checkout
       - install-aws-cli
+      - attach_workspace:
+          at: ~/
       - run:
           name: Backend Smoke Test.
           command: |
@@ -401,6 +403,8 @@ jobs:
       - checkout
       - install-aws-cli
       - install-nodejs
+      - attach_workspace:
+          at: ~/
       - run:
           name: Cache Old WorkflowID Using kvdb.io
           command: |
@@ -416,7 +420,7 @@ jobs:
             aws cloudformation deploy \
             --template-file .circleci/files/cloudfront.yml \
             --stack-name udapeople-cloudfront-maxwell-mutinda \
-            --parameter-overrides WorkflowID="udapeople-cloudfront-${CIRCLE_WORKFLOW_ID:0:7}" \
+            --parameter-overrides WorkflowID="${CIRCLE_WORKFLOW_ID:0:7}" \
             --tags project=udapeople
 
             echo "Old WorkflowID: ${OLD_WORKFLOW_ID}"
@@ -432,6 +436,8 @@ jobs:
       - checkout
       - install-aws-cli
       - install-nodejs
+      - attach_workspace:
+          at: ~/
       - run:
           name: Fetch and Remove Old Stacks and Files
           command: |
@@ -443,14 +449,15 @@ jobs:
             export OLD_WORKFLOW_ID=$(curl --insecure -s https://kvdb.io/SxXy3EGmZ1JErv5jhxou7h/old_workflow_id)
             echo "Old WorkflowID: ${OLD_WORKFLOW_ID}" 
 
-            # if [[ "${STACKS[@]}" =~ "${OLD_WORKFLOW_ID}" ]]  
             if [[ "${CIRCLE_WORKFLOW_ID:0:7}" != "${OldWorkflowID}" ]]
             then
               aws s3 rm "s3://udapeople-maxwell-mutinda-${OLD_WORKFLOW_ID}" --recursive
               aws cloudformation delete-stack --stack-name "udapeople-backend-${OLD_WORKFLOW_ID}"
               aws cloudformation delete-stack --stack-name "udapeople-frontend-${OLD_WORKFLOW_ID}"
 
-              echo "Successfully cleaned up old infra"
+              echo "-------- Delete Confirmed ----------"
+            else
+              echo "--------- Cannot Cleanup -----------"
             fi
 
       - destroy-environment
