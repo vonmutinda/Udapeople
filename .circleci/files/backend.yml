@@ -11,17 +11,17 @@ Resources:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupName: !Sub UdaPeople-${ID}
-      GroupDescription: Allow port 22 and port 3030.
+      GroupDescription: Allow ports 22, 3030 and 9100.
       SecurityGroupIngress:
-        - IpProtocol: tcp
+        - IpProtocol: tcp # ssh
           FromPort: 22
           ToPort: 22
           CidrIp: 0.0.0.0/0
-        - IpProtocol: tcp
+        - IpProtocol: tcp # node app
           FromPort: 3030
           ToPort: 3030
           CidrIp: 0.0.0.0/0 
-        - IpProtocol: tcp
+        - IpProtocol: tcp # prometheus
           FromPort: 9100
           ToPort: 9100
           CidrIp: 0.0.0.0/0

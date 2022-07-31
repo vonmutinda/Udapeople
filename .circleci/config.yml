@@ -181,7 +181,7 @@ jobs:
 
   deploy-infrastructure:
     docker:
-      - image: amazon/aws-cli # Docker image here that supports AWS CLI
+      - image: amazon/aws-cli
     steps:
       - checkout
       - run:
@@ -249,7 +249,8 @@ jobs:
             cd .circleci/ansible
             cat inventory.txt
             ansible-playbook -i inventory.txt configure-server.yml
-      # - destroy-environment
+
+      - destroy-environment
 
   run-migrations:
     docker:
@@ -439,7 +440,7 @@ jobs:
                 --stack-status-filter CREATE_COMPLETE --no-paginate --output text)) 
             echo Stack names: "${STACKS[@]}"
 
-            export OLD_WORKFLOW_ID=$(curl --insecure https://kvdb.io/SxXy3EGmZ1JErv5jhxou7h/old_workflow_id)
+            export OLD_WORKFLOW_ID=$(curl --insecure -s https://kvdb.io/SxXy3EGmZ1JErv5jhxou7h/old_workflow_id)
             echo "Old WorkflowID: ${OLD_WORKFLOW_ID}" 
 
             if [[ "${STACKS[@]}" =~ "${OLD_WORKFLOW_ID}" ]]
