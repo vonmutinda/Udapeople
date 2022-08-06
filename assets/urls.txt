@@ -1,0 +1,10 @@
+------------------------------------------
+-------------- Udapeople URLs ------------
+------------------------------------------
+
+1. Github Repository
+https://github.com/vonmutinda/Udapeople
+
+2. Frontend URL (S3 Bucket)
+http://udapeople-maxwell-mutinda-4f92d33.s3-website-us-east-1.amazonaws.com/#/employees
+
